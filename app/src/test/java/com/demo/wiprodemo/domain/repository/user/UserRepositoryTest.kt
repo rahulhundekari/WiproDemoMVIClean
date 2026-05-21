@@ -27,9 +27,9 @@ class UserRepositoryTest {
     fun `getUsers should emit Loading and Success`() = runTest {
         val users = listOf(dummyUserEntity)
         whenever(apiService.fetchUser()).thenReturn(users)
-        val emissions = repository.fetchUser().toList()
-        assert(emissions[0] is Result.Loading)
-        val success = emissions[1] as Result.Success
+        val result = repository.fetchUser().toList()
+        assert(result[0] is Result.Loading)
+        val success = result[1] as Result.Success
 
         assert(success.data.first().name == "Rahul")
         assert(success.data.first().email == "rahul@test.com")
@@ -38,18 +38,18 @@ class UserRepositoryTest {
     @Test
     fun `getUsers should emit Error when api fails`() = runTest {
         whenever(apiService.fetchUser()).thenThrow(RuntimeException("Network Error"))
-        val emissions = repository.fetchUser().toList()
-        assert(emissions[0] is Result.Loading)
-        val error = emissions[1] as Result.Error
+        val result = repository.fetchUser().toList()
+        assert(result[0] is Result.Loading)
+        val error = result[1] as Result.Error
         assert(error.error.message == "Network Error")
     }
 
     @Test
     fun `getUsers should handle empty list`() = runTest {
         whenever(apiService.fetchUser()).thenReturn(emptyList())
-        val emissions = repository.fetchUser().toList()
-        assert(emissions[0] is Result.Loading)
-        val success = emissions[1] as Result.Success
+        val result = repository.fetchUser().toList()
+        assert(result[0] is Result.Loading)
+        val success = result[1] as Result.Success
         assert(success.data.isEmpty())
     }
 
